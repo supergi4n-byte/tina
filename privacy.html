@@ -72,5 +72,64 @@
       </p>
     </div>
   </footer>
+
+  <section class="cookie-banner" id="cookie-banner" aria-live="polite" aria-label="Cookie policy">
+    <p>
+      Usiamo cookie tecnici per il funzionamento del sito. Puoi accettare o rifiutare i cookie non essenziali.
+      Maggiori dettagli nella <a href="privacy.html">Cookie Policy</a>.
+    </p>
+    <div class="cookie-actions">
+      <button class="cookie-button primary" id="cookie-accept" data-cookie-choice="accepted" type="button">Accetta</button>
+      <button class="cookie-button secondary" id="cookie-reject" data-cookie-choice="rejected" type="button">Rifiuta</button>
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      const storageKey = "orchestrator_cookie_consent";
+      const banner = document.getElementById("cookie-banner");
+
+      if (!banner) {
+        return;
+      }
+
+      function hideBanner() {
+        banner.setAttribute("hidden", "");
+        banner.style.display = "none";
+      }
+
+      let savedConsent = null;
+      try {
+        savedConsent = localStorage.getItem(storageKey);
+      } catch {
+        savedConsent = null;
+      }
+
+      if (savedConsent === "accepted" || savedConsent === "rejected") {
+        hideBanner();
+        return;
+      }
+
+      banner.addEventListener("click", function (event) {
+        const button = event.target.closest("[data-cookie-choice]");
+        if (!button || !banner.contains(button)) {
+          return;
+        }
+
+        const choice = button.dataset.cookieChoice;
+        if (choice !== "accepted" && choice !== "rejected") {
+          return;
+        }
+
+        try {
+          localStorage.setItem(storageKey, choice);
+        } catch {
+          // Ignore storage failures and still dismiss the banner.
+        }
+
+        hideBanner();
+      });
+    })();
+  </script>
 </body>
 </html>
